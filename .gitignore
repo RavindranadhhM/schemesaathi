@@ -5,3 +5,4 @@ __pycache__/
 .DS_Store
 data/raw/
 *.egg-info/
+data/processed/chunks_embedded.json
