@@ -31,8 +31,15 @@ def embed_query(query: str) -> list[float]:
     """Embed the user query using BGE-M3."""
     from FlagEmbedding import BGEM3FlagModel
     if not hasattr(embed_query, "_model"):
+        import torch
+        if torch.backends.mps.is_available():
+            device, fp16 = "mps", True
+        elif torch.cuda.is_available():
+            device, fp16 = "cuda", True
+        else:
+            device, fp16 = "cpu", False
         embed_query._model = BGEM3FlagModel(
-            "BAAI/bge-m3", use_fp16=True, device="mps"
+            "BAAI/bge-m3", use_fp16=fp16, device=device
         )
     out = embed_query._model.encode(
         [query],

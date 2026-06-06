@@ -90,6 +90,31 @@ SCHEME_NAME_KEYWORDS = {
 }
 
 
+def _boost_by_profile(chunks: list, profile) -> list:
+    """Re-score chunks based on profile match. Central schemes always kept."""
+    if not profile or not profile.state:
+        return chunks
+
+    user_state = profile.state.lower()
+    boosted = []
+    for c in chunks:
+        score = c.score
+        level = c.metadata.get("level", "").lower()
+        scheme_name = c.scheme_name.lower()
+
+        if level == "central":
+            score += 0.05          # slight boost — applies to everyone
+        elif user_state in scheme_name or user_state in str(c.metadata.get("eligible_states",[])).lower():
+            score += 0.15          # strong boost for matching state
+        elif level == "state":
+            score -= 0.10          # penalise other-state schemes
+
+        c.score = min(1.0, max(0.0, score))
+        boosted.append(c)
+
+    return sorted(boosted, key=lambda x: x.score, reverse=True)
+
+
 def run(state: dict, query_embedding: list[float]) -> dict:
     profile = state.get("user_profile")
     query   = state["raw_query"].lower()
@@ -125,4 +150,6 @@ def run(state: dict, query_embedding: list[float]) -> dict:
             merged.append(c)
 
     merged.sort(key=lambda c: c.score, reverse=True)
+    # Apply profile-based re-scoring
+    merged = _boost_by_profile(merged, state.get("user_profile"))
     return {**state, "retrieved_chunks": merged[:25]}

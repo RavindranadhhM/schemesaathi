@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SchemeSaathi — Find Your Government Benefits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --saffron: #FF6B00; --saffron-light: #FF8C33; --saffron-dim: rgba(255,107,0,0.12);
+  --green: #138808; --green-light: #1aad0a; --green-dim: rgba(19,136,8,0.12);
+  --navy: #0A0F1E; --navy-2: #0F1628; --navy-3: #151d35;
+  --white: #F8F9FF; --white-60: rgba(248,249,255,0.6); --white-20: rgba(248,249,255,0.08);
+  --border: rgba(248,249,255,0.08); --font: 'Sora', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy);color:var(--white);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(255,107,0,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 35% at 80% 80%,rgba(19,136,8,0.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+.container{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 24px}
+header{padding:28px 0 0;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--saffron),var(--green));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.logo-name{font-size:18px;font-weight:700;background:linear-gradient(90deg,var(--saffron),var(--white));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.logo-tagline{font-size:11px;color:var(--white-60);font-weight:300;margin-top:2px}
+.header-badge{font-size:11px;padding:4px 12px;border-radius:20px;border:1px solid var(--border);color:var(--white-60);background:var(--white-20)}
+.hero{padding:56px 0 40px;text-align:center}
+.hero-pill{display:inline-flex;align-items:center;gap:6px;background:var(--saffron-dim);border:1px solid rgba(255,107,0,0.25);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--saffron-light);margin-bottom:24px;font-weight:500}
+.hero h1{font-size:clamp(26px,5vw,42px);font-weight:700;line-height:1.15;margin-bottom:14px;letter-spacing:-0.02em}
+.hero h1 span{background:linear-gradient(90deg,var(--saffron),#ffaa44,var(--green-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:15px;color:var(--white-60);max-width:520px;margin:0 auto 36px;line-height:1.65;font-weight:300}
+.stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:44px}
+.stat{background:var(--white-20);border:1px solid var(--border);border-radius:12px;padding:12px 18px;text-align:center}
+.stat-num{font-size:19px;font-weight:700;color:var(--saffron);line-height:1}
+.stat-label{font-size:10px;color:var(--white-60);margin-top:3px}
+.query-box{background:var(--navy-2);border:1px solid var(--border);border-radius:18px;padding:22px;margin-bottom:20px;transition:border-color .2s}
+.query-box:focus-within{border-color:rgba(255,107,0,0.4)}
+.query-label{font-size:11px;color:var(--white-60);margin-bottom:10px;font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+textarea{width:100%;background:var(--navy-3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--white);font-family:var(--font);font-size:14px;resize:none;outline:none;line-height:1.5;transition:border-color .2s;min-height:80px}
+textarea:focus{border-color:rgba(255,107,0,0.4)}
+textarea::placeholder{color:rgba(248,249,255,0.2)}
+.query-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;flex-wrap:wrap;gap:8px}
+.example-pills{display:flex;gap:5px;flex-wrap:wrap}
+.example-pill{font-size:11px;padding:4px 9px;border-radius:7px;border:1px solid var(--border);color:var(--white-60);background:var(--white-20);cursor:pointer;transition:all .15s;font-family:var(--font)}
+.example-pill:hover{border-color:rgba(255,107,0,0.3);color:var(--saffron-light);background:var(--saffron-dim)}
+.ask-btn{background:linear-gradient(135deg,var(--saffron),#e55a00);color:white;border:none;border-radius:9px;padding:10px 22px;font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .2s;flex-shrink:0}
+.ask-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 24px rgba(255,107,0,0.3)}
+.ask-btn:disabled{opacity:.5;cursor:not-allowed}
+.loading{display:none;text-align:center;padding:36px;color:var(--white-60);font-size:14px}
+.loading.visible{display:block}
+.loading-dots{display:inline-flex;gap:4px;margin-right:6px}
+.loading-dots span{width:6px;height:6px;background:var(--saffron);border-radius:50%;animation:pulse 1.2s ease-in-out infinite}
+.loading-dots span:nth-child(2){animation-delay:.2s}
+.loading-dots span:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.response-area{display:none;animation:fadeUp .4s ease}
+.response-area.visible{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.cache-badge{display:inline-flex;align-items:center;gap:5px;background:var(--green-dim);border:1px solid rgba(19,136,8,0.25);border-radius:8px;padding:4px 10px;font-size:11px;color:var(--green-light);margin-bottom:12px;font-weight:500}
+.section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--white-60);margin-bottom:10px}
+.schemes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;margin-bottom:18px}
+.scheme-chip{background:var(--navy-3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;display:flex;align-items:flex-start;gap:7px;transition:border-color .15s}
+.scheme-chip:hover{border-color:rgba(255,107,0,0.3)}
+.scheme-chip a{color:var(--white);text-decoration:none;line-height:1.4;flex:1}
+.scheme-chip a:hover{color:var(--saffron-light)}
+.scheme-level{font-size:9px;padding:2px 5px;border-radius:4px;font-weight:600;flex-shrink:0;margin-top:1px}
+.level-central{background:var(--saffron-dim);color:var(--saffron-light)}
+.level-state{background:var(--green-dim);color:var(--green-light)}
+.profile-card{background:var(--navy-3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.profile-label{font-size:11px;color:var(--white-60);font-weight:500}
+.profile-tags{display:flex;gap:5px;flex-wrap:wrap}
+.profile-tag{font-size:11px;padding:2px 8px;border-radius:5px;background:var(--saffron-dim);border:1px solid rgba(255,107,0,0.2);color:var(--saffron-light)}
+.response-text{background:var(--navy-2);border:1px solid var(--border);border-radius:14px;padding:20px;font-size:14px;line-height:1.75;color:var(--white-60);white-space:pre-wrap;margin-bottom:14px}
+.citations{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.citation{font-size:11px;padding:3px 9px;border-radius:5px;background:var(--white-20);border:1px solid var(--border);color:var(--white-60)}
+.citation .score{color:var(--saffron);margin-left:3px;font-weight:600}
+.error-box{background:rgba(220,50,50,0.08);border:1px solid rgba(220,50,50,0.2);border-radius:10px;padding:14px 18px;color:#ff6b6b;font-size:14px;display:none}
+.error-box.visible{display:block}
+.divider{height:1px;background:var(--border);margin:16px 0}
+footer{text-align:center;padding:44px 0 28px;font-size:11px;color:rgba(248,249,255,0.2);border-top:1px solid var(--border);margin-top:56px;line-height:1.9}
+footer a{color:var(--saffron);text-decoration:none}
+.chakra-bg{position:fixed;right:-100px;top:50%;transform:translateY(-50%);width:380px;height:380px;opacity:.02;pointer-events:none;z-index:0;font-size:380px;line-height:1;user-select:none}
+</style>
+</head>
+<body>
+<div class="chakra-bg">☸</div>
+<div class="container">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🇮🇳</div>
+      <div>
+        <div class="logo-name">SchemeSaathi</div>
+        <div class="logo-tagline">सरकारी योजना खोजक</div>
+      </div>
+    </div>
+    <div class="header-badge">3,400+ Schemes • AI-Powered</div>
+  </header>
+
+  <div class="hero">
+    <div class="hero-pill">✦ Agentic RAG • BGE-M3 • LangGraph</div>
+    <h1>Find Every Government<br>Scheme <span>You Deserve</span></h1>
+    <p>India has 3,400+ welfare schemes. Most eligible citizens never find them. Describe your profile and discover what you qualify for — grounded in official sources.</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">3,400+</div><div class="stat-label">Schemes Indexed</div></div>
+      <div class="stat"><div class="stat-num">27,262</div><div class="stat-label">Knowledge Chunks</div></div>
+      <div class="stat"><div class="stat-num">0.95</div><div class="stat-label">Answer Relevancy</div></div>
+      <div class="stat"><div class="stat-num">Hindi + EN</div><div class="stat-label">Multilingual</div></div>
+    </div>
+  </div>
+
+  <div class="query-box">
+    <div class="query-label">Your Query</div>
+    <textarea id="queryInput" placeholder="e.g. I am a 35-year-old SC farmer in Karnataka with annual income ₹80,000. What schemes am I eligible for?" rows="3"></textarea>
+    <div class="query-footer">
+      <div class="example-pills">
+        <button class="example-pill" onclick="setExample(this)">SC farmer Karnataka</button>
+        <button class="example-pill" onclick="setExample(this)">Widow Maharashtra BPL</button>
+        <button class="example-pill" onclick="setExample(this)">SC ST scholarship</button>
+        <button class="example-pill" onclick="setExample(this)">PM KISAN eligibility</button>
+        <button class="example-pill" onclick="setExample(this)">Free LPG BPL</button>
+      </div>
+      <button class="ask-btn" id="askBtn" onclick="askQuery()">Ask →</button>
+    </div>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="loading-dots"><span></span><span></span><span></span></div>
+    Searching 3,400 schemes...
+  </div>
+  <div class="error-box" id="errorBox"></div>
+
+  <div class="response-area" id="responseArea">
+    <div id="cacheBadge" class="cache-badge" style="display:none">⚡ Instant — semantic cache hit</div>
+    <div id="profileCard" class="profile-card" style="display:none">
+      <span class="profile-label">Profile detected:</span>
+      <div class="profile-tags" id="profileTags"></div>
+    </div>
+    <div class="section-title">Matched Schemes</div>
+    <div class="schemes-grid" id="schemesGrid"></div>
+    <div class="divider"></div>
+    <div class="section-title">AI Analysis</div>
+    <div class="response-text" id="responseText"></div>
+    <div class="section-title" style="margin-bottom:8px">Sources</div>
+    <div class="citations" id="citations"></div>
+  </div>
+
+  <footer>
+    <div>LangGraph · Qdrant · BGE-M3 · Groq Llama-3.3-70B · FastAPI</div>
+    <div>Data from <a href="https://myscheme.gov.in" target="_blank">myscheme.gov.in</a> (NDSAP). For informational purposes only.</div>
+    <div><a href="https://github.com/RavindranadhhM/schemesaathi" target="_blank">GitHub</a> · Built by Ravindranadh M</div>
+  </footer>
+</div>
+
+<script>
+const API_BASE = (window.location.hostname==='localhost'||window.location.hostname==='127.0.0.1') ? 'http://localhost:8000' : '';
+let sessionId = null;
+
+const EXAMPLES = {
+  'SC farmer Karnataka':   'I am a 35-year-old SC farmer in Karnataka with annual income ₹80,000. What schemes am I eligible for?',
+  'Widow Maharashtra BPL': 'I am a 52-year-old widow in Maharashtra from a BPL family. What pension and welfare schemes can I apply for?',
+  'SC ST scholarship':     'I am an SC student pursuing graduation in Tamil Nadu. What scholarship schemes are available?',
+  'PM KISAN eligibility':  'What is PM KISAN scheme and who is eligible for it?',
+  'Free LPG BPL':          'Are there any schemes for free LPG gas connection for BPL families?',
+};
+
+function setExample(btn) {
+  document.getElementById('queryInput').value = EXAMPLES[btn.textContent.trim()] || btn.textContent;
+}
+
+async function askQuery() {
+  const query = document.getElementById('queryInput').value.trim();
+  if (!query) return;
+  const btn = document.getElementById('askBtn');
+  btn.disabled = true;
+  document.getElementById('loading').classList.add('visible');
+  document.getElementById('responseArea').classList.remove('visible');
+  document.getElementById('errorBox').classList.remove('visible');
+  try {
+    const res = await fetch(`${API_BASE}/query`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({query, session_id: sessionId}),
+    });
+    if (!res.ok) throw new Error(`Server error: ${res.status}`);
+    const data = await res.json();
+    sessionId = data.session_id;
+    renderResponse(data);
+  } catch(err) {
+    document.getElementById('errorBox').textContent = `Error: ${err.message}`;
+    document.getElementById('errorBox').classList.add('visible');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('loading').classList.remove('visible');
+  }
+}
+
+function renderResponse(data) {
+  document.getElementById('cacheBadge').style.display = data.cache_hit ? 'inline-flex' : 'none';
+
+  // Profile tags
+  const q = document.getElementById('queryInput').value.toLowerCase();
+  const tags = [];
+  ['karnataka','maharashtra','delhi','tamil nadu','gujarat','rajasthan','uttar pradesh',
+   'bihar','west bengal','andhra pradesh','telangana','kerala','punjab','haryana',
+   'madhya pradesh','odisha','assam','rajasthan','goa','himachal pradesh'].forEach(s => {
+    if (q.includes(s)) tags.push(s.split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' '));
+  });
+  if (q.includes(' sc ')||q.includes('scheduled caste')) tags.push('SC');
+  if (q.includes(' st ')||q.includes('scheduled tribe')) tags.push('ST');
+  if (q.includes('obc')) tags.push('OBC');
+  if (q.includes('bpl')||q.includes('below poverty')) tags.push('BPL');
+  if (q.includes('farmer')||q.includes('kisan')) tags.push('Farmer');
+  if (q.includes('student')) tags.push('Student');
+  if (q.includes('widow')) tags.push('Widow');
+  if (q.includes('disable')||q.includes('differently')) tags.push('Differently Abled');
+
+  const pc = document.getElementById('profileCard');
+  const pt = document.getElementById('profileTags');
+  pt.innerHTML = '';
+  if (tags.length) {
+    pc.style.display = 'flex';
+    tags.slice(0,5).forEach(t => {
+      const el = document.createElement('span');
+      el.className = 'profile-tag';
+      el.textContent = t;
+      pt.appendChild(el);
+    });
+  } else { pc.style.display = 'none'; }
+
+  // Schemes
+  const grid = document.getElementById('schemesGrid');
+  grid.innerHTML = '';
+  (data.matched_schemes||[]).forEach(s => {
+    const chip = document.createElement('div');
+    chip.className = 'scheme-chip';
+    const lvl = (s.level||'Central');
+    chip.innerHTML = `<span class="scheme-level ${lvl.toLowerCase()==='central'?'level-central':'level-state'}">${lvl}</span><a href="${s.source_url||'https://myscheme.gov.in'}" target="_blank" rel="noopener">${s.scheme_name}</a>`;
+    grid.appendChild(chip);
+  });
+
+  document.getElementById('responseText').textContent = data.response;
+
+  const citDiv = document.getElementById('citations');
+  citDiv.innerHTML = '';
+  (data.citations||[]).slice(0,5).forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'citation';
+    el.innerHTML = `${c.scheme_name.substring(0,35)}… <span class="score">${c.score}</span>`;
+    citDiv.appendChild(el);
+  });
+
+  document.getElementById('responseArea').classList.add('visible');
+  document.getElementById('responseArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+document.getElementById('queryInput').addEventListener('keydown', e => {
+  if (e.key==='Enter' && (e.metaKey||e.ctrlKey)) askQuery();
+});
+</script>
+</body>
+</html>
