@@ -1,11 +1,11 @@
 import os
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=".env")
-from google import genai
-from google.genai import types
+from groq import Groq
 from agent.prompts import SUMMARIZER
 
-_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+MODEL = "llama-3.1-8b-instant"  # Fast small model for summarisation
 MAX_RAW_TURNS = 5
 
 def compress_history(history: list[dict]) -> str:
@@ -14,12 +14,12 @@ def compress_history(history: list[dict]) -> str:
         history_text = "\n".join(
             f"{m['role'].upper()}: {m['content'][:300]}" for m in history[-10:]
         )
-        resp = _client.models.generate_content(
-            model="gemini-2.5-flash-lite-preview-06-17",
-            contents=SUMMARIZER.format(history=history_text),
-            config=types.GenerateContentConfig(temperature=0.0, max_output_tokens=150),
+        resp = _client.chat.completions.create(
+            model=MODEL,
+            messages=[{"role": "user", "content": SUMMARIZER.format(history=history_text)}],
+            temperature=0.0, max_tokens=150,
         )
-        return resp.text.strip()
+        return resp.choices[0].message.content.strip()
     except Exception:
         return ""
 

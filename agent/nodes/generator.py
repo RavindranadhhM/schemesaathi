@@ -1,12 +1,12 @@
 import os
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=".env")
-from google import genai
-from google.genai import types
+from groq import Groq
 from agent.state import RetrievedChunk, UserProfile
 from agent.prompts import GENERATOR
 
-_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+MODEL = "llama-3.3-70b-versatile"
 
 def _format_profile(profile) -> str:
     if not profile: return "Not provided"
@@ -20,7 +20,7 @@ def _format_profile(profile) -> str:
     return ", ".join(parts) if parts else "Not provided"
 
 def _format_context(chunks) -> str:
-    by_scheme: dict = {}
+    by_scheme = {}
     for c in chunks:
         by_scheme.setdefault(c.scheme_name, []).append(f"[{c.chunk_type}] {c.text[:500]}")
     return "\n\n".join(
@@ -46,16 +46,18 @@ def run(state: dict) -> dict:
         return {**state, "response": "I could not find relevant schemes. Please provide your state, age, income and occupation.",
                 "matched_schemes": [], "validation_passed": True}
     try:
-        resp = _client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=GENERATOR.format(
+        resp = _client.chat.completions.create(
+            model=MODEL,
+            messages=[{"role": "user", "content": GENERATOR.format(
                 profile=_format_profile(profile),
                 history=state.get("session_summary") or "No prior conversation",
-                context=_format_context(chunks), query=query,
-            ),
-            config=types.GenerateContentConfig(temperature=0.3, max_output_tokens=1024),
+                context=_format_context(chunks),
+                query=query,
+            )}],
+            temperature=0.3,
+            max_tokens=1024,
         )
-        response_text = resp.text.strip()
+        response_text = resp.choices[0].message.content.strip()
     except Exception as e:
         response_text = f"Error generating response: {e}"
     return {**state, "response": response_text, "matched_schemes": _matched(chunks),

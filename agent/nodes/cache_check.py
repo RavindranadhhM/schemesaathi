@@ -21,8 +21,8 @@ def cosine_similarity(a, b) -> float:
     return float(np.dot(va, vb) / denom) if denom > 0 else 0.0
 
 def cache_lookup(query_embedding, threshold=0.92):
-    r = _get_redis()
     try:
+        r = _get_redis()
         for key in r.keys("cache:*"):
             data = r.get(key)
             if not data: continue
@@ -34,8 +34,8 @@ def cache_lookup(query_embedding, threshold=0.92):
     return None
 
 def cache_store(query_embedding, response, ttl=86400):
-    r = _get_redis()
     try:
+        r = _get_redis()
         key = f"cache:{hash(tuple(query_embedding[:10]))}"
         r.setex(key, ttl, json.dumps({"embedding": query_embedding, "response": response}))
     except Exception:
