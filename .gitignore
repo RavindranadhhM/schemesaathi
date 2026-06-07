@@ -6,3 +6,7 @@ __pycache__/
 data/raw/
 *.egg-info/
 data/processed/chunks_embedded.json
+data/processed/
+data/raw/
+*.egg-info/
+venv/
