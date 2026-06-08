@@ -62,39 +62,39 @@ User Query (English or Hindi)
           │
           ▼
 ┌─────────────────────────┐
-│    Semantic Cache        │ ──── HIT ──→ Response in ~50ms
-│    Redis + cosine 0.92   │
+│    Semantic Cache       │ ──── HIT ──→ Response in ~50ms
+│    Redis + cosine 0.92  │
 └───────────┬─────────────┘
             │ MISS
             ▼
 ┌─────────────────────────┐
-│      Scope Gate          │  Pure keyword classifier — zero LLM cost
+│      Scope Gate         │  Pure keyword classifier — zero LLM cost
 └───────────┬─────────────┘
             ▼
 ┌─────────────────────────┐
-│     Profile Parser       │  60+ city→state mappings + regex
-│                          │  Groq Llama-3.1-8B fallback for Hindi
+│     Profile Parser      │  60+ city→state mappings + regex
+│                         │  Groq Llama-3.1-8B fallback for Hindi
 └───────────┬─────────────┘
             ▼
 ┌─────────────────────────┐
-│    Hybrid Retriever      │  BGE-M3 dense cosine similarity
-│                          │  Name-boosted exact scheme matching
-│                          │  Profile-aware re-scoring:
-│                          │    Central        +0.05 (all citizens)
-│                          │    Matching state +0.15
-│                          │    Other state    −0.10
+│    Hybrid Retriever     │  BGE-M3 dense cosine similarity
+│                         │  Name-boosted exact scheme matching
+│                         │  Profile-aware re-scoring:
+│                         │    Central        +0.05 (all citizens)
+│                         │    Matching state +0.15
+│                         │    Other state    −0.10
 └───────────┬─────────────┘
             ▼
 ┌─────────────────────────┐
-│       Grader             │  Vector score threshold ≥ 0.55
+│       Grader            │  Vector score threshold ≥ 0.55
 └───────────┬─────────────┘
             ▼
 ┌─────────────────────────┐
-│  Generator — Groq        │  Llama-3.3-70B, grounded with citations
+│  Generator — Groq       │  Llama-3.3-70B, grounded with citations
 └───────────┬─────────────┘
             ▼
 ┌─────────────────────────┐
-│  Memory Node             │  Session summary, Groq Llama-3.1-8B
+│  Memory Node            │  Session summary, Groq Llama-3.1-8B
 └───────────┬─────────────┘
             ▼
        Final Response
