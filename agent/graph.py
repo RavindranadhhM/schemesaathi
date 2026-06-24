@@ -16,6 +16,7 @@ load_dotenv(dotenv_path=".env")
 
 from langgraph.graph import StateGraph, END
 from agent.state import AgentState
+from agent.nodes import refinery
 from agent.nodes import (
     cache_check, scope_gate, profile_parser,
     retriever, grader, generator, memory,
@@ -79,6 +80,9 @@ def node_generator(state: AgentState) -> AgentState:
     return generator.run(state)
 
 
+def node_refinery(state: AgentState) -> AgentState:
+    return refinery.refine(state)
+
 def node_memory(state: AgentState) -> AgentState:
     return memory.update(state)
 
@@ -104,6 +108,7 @@ def build_graph():
     g.add_node("retriever",      node_retriever)
     g.add_node("grader",         node_grader)
     g.add_node("generator",      node_generator)
+    g.add_node("refinery",        node_refinery)
     g.add_node("memory",         node_memory)
 
     g.set_entry_point("cache_check")
@@ -119,7 +124,8 @@ def build_graph():
     g.add_edge("profile_parser", "retriever")
     g.add_edge("retriever",      "grader")
     g.add_edge("grader",         "generator")
-    g.add_edge("generator",      "memory")
+    g.add_edge("generator",      "refinery")
+    g.add_edge("refinery",       "memory")
     g.add_edge("memory",         END)
 
     return g.compile()
@@ -153,6 +159,8 @@ def run_query(query: str, session_state: dict | None = None) -> dict:
         "matched_schemes":  [],
         "citations":        [],
         "validation_passed": False,
+        "refined_output":    None,
+        "disclaimer":         "",
         "error":            None,
         "session_history":  [],
         "session_summary":  "",

@@ -50,3 +50,5 @@ class AgentState(TypedDict):
     # ── Memory ─────────────────────────────────────────────
     session_history: list[dict]            # [{role, content}]
     session_summary: str                   # compressed history
+    refined_output: list | None
+    disclaimer: str

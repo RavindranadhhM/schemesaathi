@@ -9,7 +9,6 @@ from agent.graph import run_query
 router  = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
 
-# In-memory session store (replace with Redis in production)
 _sessions: dict[str, dict] = {}
 
 @router.post("/query", response_model=QueryResponse)
@@ -20,7 +19,6 @@ async def query_schemes(request: Request, body: QueryRequest):
 
     result = run_query(body.query, session_state)
 
-    # Persist session state
     _sessions[session_id] = {
         "session_history": result.get("session_history", []),
         "session_summary": result.get("session_summary", ""),
@@ -29,6 +27,8 @@ async def query_schemes(request: Request, body: QueryRequest):
 
     return QueryResponse(
         response        = result["response"],
+        refined_output  = result.get("refined_output"),
+        disclaimer      = result.get("disclaimer", "Verify eligibility at myscheme.gov.in before applying."),
         matched_schemes = result.get("matched_schemes", []),
         citations       = result.get("citations", []),
         cache_hit       = result.get("cache_hit", False),
