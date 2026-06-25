@@ -143,7 +143,10 @@ def get_graph():
 
 def run_query(query: str, session_state: dict | None = None) -> dict:
     """Main entry point. Call this from the API."""
+    import time
+    from agent.tracer import trace_query
     graph = get_graph()
+    _start = time.time()
 
     initial: AgentState = {
         "raw_query":        query,
@@ -168,4 +171,6 @@ def run_query(query: str, session_state: dict | None = None) -> dict:
     }
 
     result = graph.invoke(initial)
+    latency_ms = (time.time() - _start) * 1000
+    trace_query(query, result, latency_ms)
     return result

@@ -1,0 +1,31 @@
+name: RAGAS Evaluation
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # Every Monday 2am
+  workflow_dispatch:
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Run eval
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          QDRANT_URL: ${{ secrets.QDRANT_URL }}
+          QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+          REDIS_URL: redis://localhost:6379
+        run: |
+          python eval/collect_responses.py
+          python -m eval.score_responses
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ragas-scores
+          path: eval/results/

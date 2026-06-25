@@ -10,6 +10,9 @@ from slowapi.errors import RateLimitExceeded
 from api.routes.query import router as query_router
 from api.routes.health import router as health_router
 
+from api.startup_checks import validate_secrets
+validate_secrets()
+
 limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
