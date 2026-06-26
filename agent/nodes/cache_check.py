@@ -1,4 +1,5 @@
-import json, os
+import json
+import os
 import numpy as np
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=".env")
@@ -25,7 +26,8 @@ def cache_lookup(query_embedding, threshold=0.92):
         r = _get_redis()
         for key in r.keys("cache:*"):
             data = r.get(key)
-            if not data: continue
+            if not data:
+                continue
             entry = json.loads(data)
             if cosine_similarity(query_embedding, entry["embedding"]) >= threshold:
                 return entry["response"]

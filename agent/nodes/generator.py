@@ -2,21 +2,27 @@ import os
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=".env")
 from groq import Groq
-from agent.state import RetrievedChunk, UserProfile
 from agent.prompts import GENERATOR
 
 _client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 MODEL = "llama-3.3-70b-versatile"
 
 def _format_profile(profile) -> str:
-    if not profile: return "Not provided"
+    if not profile:
+        return "Not provided"
     parts = []
-    if profile.state:      parts.append(f"State: {profile.state}")
-    if profile.age:        parts.append(f"Age: {profile.age}")
-    if profile.gender:     parts.append(f"Gender: {profile.gender}")
-    if profile.caste:      parts.append(f"Category: {profile.caste.upper()}")
-    if profile.income_inr: parts.append(f"Annual income: \u20b9{profile.income_inr:,}")
-    if profile.occupation: parts.append(f"Occupation: {profile.occupation}")
+    if profile.state:
+        parts.append(f"State: {profile.state}")
+    if profile.age:
+        parts.append(f"Age: {profile.age}")
+    if profile.gender:
+        parts.append(f"Gender: {profile.gender}")
+    if profile.caste:
+        parts.append(f"Category: {profile.caste.upper()}")
+    if profile.income_inr:
+        parts.append(f"Annual income: \u20b9{profile.income_inr:,}")
+    if profile.occupation:
+        parts.append(f"Occupation: {profile.occupation}")
     return ", ".join(parts) if parts else "Not provided"
 
 def _format_context(chunks) -> str:

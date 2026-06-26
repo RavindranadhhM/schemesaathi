@@ -47,7 +47,7 @@ def load_and_parse(save: bool = True) -> list[dict]:
 
 if __name__ == "__main__":
     schemes = load_and_parse()
-    print(f"\nSample:")
+    print("\nSample:")
     s = schemes[0]
     for k in ["scheme_name","level","category","tags","details","benefits","eligibility"]:
         print(f"  {k}: {str(s.get(k,''))[:120]}")

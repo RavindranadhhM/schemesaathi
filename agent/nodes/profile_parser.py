@@ -1,4 +1,6 @@
-import json, os, re
+import json
+import os
+import re
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=".env")
 from groq import Groq
@@ -147,10 +149,16 @@ def run(state: dict) -> dict:
     profile = parse_profile(profile_text)
     existing = state.get("user_profile")
     if existing:
-        if not profile.state:      profile.state      = existing.state
-        if not profile.income_inr: profile.income_inr = existing.income_inr
-        if not profile.caste:      profile.caste      = existing.caste
-        if not profile.gender:     profile.gender     = existing.gender
-        if not profile.age:        profile.age        = existing.age
-        if not profile.occupation: profile.occupation = existing.occupation
+        if not profile.state:
+            profile.state = existing.state
+        if not profile.income_inr:
+            profile.income_inr = existing.income_inr
+        if not profile.caste:
+            profile.caste = existing.caste
+        if not profile.gender:
+            profile.gender = existing.gender
+        if not profile.age:
+            profile.age = existing.age
+        if not profile.occupation:
+            profile.occupation = existing.occupation
     return {**state, "user_profile": profile}

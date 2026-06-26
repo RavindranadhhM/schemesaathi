@@ -1,4 +1,3 @@
-from agent.state import RetrievedChunk
 
 RELEVANCE_THRESHOLD = 0.55
 

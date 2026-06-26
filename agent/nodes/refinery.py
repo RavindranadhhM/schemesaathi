@@ -59,7 +59,8 @@ def _extract_fields(body: str) -> tuple[str, str, str]:
 
     if not eligibility:
         for i, s in enumerate(sents):
-            if i in used: continue
+            if i in used:
+                continue
             if _match(s, ELIG_P):
                 eligibility = _clean(s)
                 used.add(i)
@@ -67,7 +68,8 @@ def _extract_fields(body: str) -> tuple[str, str, str]:
 
     if not action:
         for i, s in enumerate(sents):
-            if i in used: continue
+            if i in used:
+                continue
             if _match(s, ACTION_P):
                 action = _clean(s)
                 break

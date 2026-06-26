@@ -9,7 +9,8 @@ MODEL = "llama-3.1-8b-instant"  # Fast small model for summarisation
 MAX_RAW_TURNS = 5
 
 def compress_history(history: list[dict]) -> str:
-    if not history: return ""
+    if not history:
+        return ""
     try:
         history_text = "\n".join(
             f"{m['role'].upper()}: {m['content'][:300]}" for m in history[-10:]

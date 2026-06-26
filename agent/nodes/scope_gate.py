@@ -1,4 +1,3 @@
-import os
 from agent.prompts import OUT_OF_SCOPE
 
 SCHEME_KEYWORDS = [

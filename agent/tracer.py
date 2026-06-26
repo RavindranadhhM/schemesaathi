@@ -4,7 +4,6 @@ Langfuse tracing — wraps every agent run with a trace.
 Logs: query, profile, retrieved schemes, response, latency, RAGAS scores.
 """
 import os
-import time
 from dotenv import load_dotenv
 load_dotenv(dotenv_path=".env")
 
@@ -32,7 +31,7 @@ def trace_query(query: str, result: dict, latency_ms: float):
         return
 
     try:
-        trace = lf.trace(
+        lf.trace(
             name="schemesaathi-query",
             input={"query": query},
             output={"response": result.get("response", "")[:500]},

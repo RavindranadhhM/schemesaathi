@@ -9,7 +9,6 @@ We batch in groups and add sleep to stay under limits.
 """
 import json
 import time
-import asyncio
 from pathlib import Path
 from typing import Optional
 import google.generativeai as genai
